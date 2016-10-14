@@ -131,29 +131,29 @@ struct timeval tvBefore, tvAfter;
 	}
 
 	/* E. */
-	{
-	gettimeofday(&tvBefore, NULL);
-		int i, j, k;
-		for (j = 0; j < 100; j++) {
+	// {
+	// gettimeofday(&tvBefore, NULL);
+	// 	int i, j, k;
+	// 	for (j = 0; j < 100; j++) {
 				
-				int* arr[3000];
-				// allocate i + 1 bytes repeatedly
-				for(i = 0; i < 3000; i++) {
-					arr[i] = (int*) malloc(sizeof(i+1));
-				}
-				// free i + 1 bytes repeatedly
-				for(k = 0; k < 3000; k++) {
-					free(arr[i]);
-				}	
-			}
+	// 			int* arr[3000];
+	// 			// allocate i + 1 bytes repeatedly
+	// 			for(i = 0; i < 3000; i++) {
+	// 				arr[i] = (int*) malloc(sizeof(i+1));
+	// 			}
+	// 			// free i + 1 bytes repeatedly
+	// 			for(k = 0; k < 3000; k++) {
+	// 				free(arr[i]);
+	// 			}	
+	// 		}
 		
-		gettimeofday (&tvAfter, NULL);
+	// 	gettimeofday (&tvAfter, NULL);
 		
-	float executionTimeE = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
-    printf("Total execution time of workload E in microseconds: %f\n", executionTimeE);
-    printf("Average execution time of workload E in microseconds: %f\n", executionTimeE / 100);
+	// float executionTimeE = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
+ //    printf("Total execution time of workload E in microseconds: %f\n", executionTimeE);
+ //    printf("Average execution time of workload E in microseconds: %f\n", executionTimeE / 100);
 
-	}
+	// }
 	/* F. */
 	{
 	gettimeofday(&tvBefore, NULL);

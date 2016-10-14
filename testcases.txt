@@ -1,0 +1,9 @@
+Assignment:	1
+Partners:	Eric Zhuang-ez79
+		Shah Rahim-sr1163
+
+Workload E:	malloc() i = 1 then increase by 1 byte 3000 times--> so malloc(1), malloc(2), malloc(3)...
+		Do this 3000 times, then free() 3000 times one by one.  
+ 
+Workload F:	malloc i = 3000 then free(), then i-1 bytes 3000 times. So malloc(3000), free(3000), malloc(2999), free(2999)
+		Do this 3000 times, malloc and freeing each block of allocated memory. 
