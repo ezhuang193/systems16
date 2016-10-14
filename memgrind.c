@@ -1,170 +1,126 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
 
 
 int main(int argc, char** argv) {
 	
-	struct timeval *timeBefore, *timeAfter;
-	
-	int *a;
-	int *b;
-	int *c;
-	int *d;
-	
-	//Testcase A:
-	{
-	/*int intialTimeA */
-	gettimeofday(&timeBefore, NULL);
-		
-		for (int e = 0; e < 100; e++) {
-				
-				int* arr[3000];
-				//malloc 1 byte 3000 times
-				for(int i = 0; i < 3000; i++) {
-					arr[i] = (int*) malloc(sizeof(1));
-				}
-				//free the 3000 1 byte pointers one by one
-				for(int i = 0; i < 3000; i++) {
-					free(arr[i]);
-				}	
-			}
-		
-		//int fianlTimeA = 
-		gettimeofday (&timeAfter, NULL);
-		
-		double exeTimeA = (double) (timeAfter.tv_usec - timeBefore.tv_usec) / 1000000 + (double) (timeAfter.tv_sec - timeBefore.tv_sec);
-		
-		printf("The execution time of testcase A, over 100 executions, in microseconds is: %ld\n", exeTimeA);
-	}
-	
-	//Testcase B:
-	{
-		//int intialTimeB = 
-		gettimeofday(&timeBefore, NULL);
-		
-			for (int e = 0; e < 100; e++) {
-			//malloc one byte and immediately free it 3000 times in a row
-				for(int i = 0; i < 3000; i++) {
-					b = (int*) malloc(sizeof(1));
-					free(b);
-				}
-			}
-			
-		//int fianlTimeB = 
-		gettimeofday (&timeAfter, NULL);
-		
-		double exeTimeB = (double) (timeAfter.tv_usec - timeBefore.tv_usec) / 1000000 + (double) (timeAfter.tv_sec - timeBefore.tv_sec);
-		
-		printf("The execution time of testcase B, over 100 executions, in microseconds is: %ld\n", exeTimeB);
-	}
+struct timeval tvBefore, tvAfter; 
 
-	//randomly choose between 1 byte malloc or free 6000 times
-	
-	/*a = (int*) malloc(856*sizeof(1));
-	
-	
-	for(int r1 = 0; r1 < 856; r1++) {
-		free(a);
-	}
-	
-	c = (int*) malloc(365*sizeof(1));
-	
-	for(int r2 = 0; r2 < 365; r2++) {
-		free(c);
-	}
-	
-	d = (int*) malloc(1779*sizeof(1));
-	
-	for(int r3 = 0; r3 < 1779; r3++) {
-		free(d);
-	}*/
-	
-	//Testcase C:
+    // Workload A
 	{
-		//int intialTimeC = 
-		gettimeofday(&timeBefore, NULL);
+    gettimeofday (&tvBefore, NULL);
+    int i = 0;
+	for (i = 0; i < 100; i++) {
 		
-			for (int e = 0; e < 100; e++) {
-				int valid = 0;
-				int countM = 0;
-				int	countF = 0;
-				int* randomArr[3000];
-				int r;
-				for(int i = 0; i < 6000; i++) {
-					r = (rand()% 2);
-					if ((r == 0) && countM < 3000 ) {
-						randomArr[countM] = (int*) (malloc(sizeof(1)));
-						printf("Malloced");
-						countM++;
-						//valid++;
-					}
-					else {
-						if(countF < countM) {
-							free(randomArr[countF]);
-							printf("Free'd");
-							countF++;
-						}	
-					}
-					printf("Part C -- countmalloc = %d : countfree = %d\n", countM, countF);
-				}
-			}
-		//int fianlTimeC = 
-		gettimeofday (&timeAfter, NULL);
-		
-		double exeTimeC = (double) (timeAfter.tv_usec - timeBefore.tv_usec) / 1000000 + (double) (timeAfter.tv_sec - timeBefore.tv_sec);
-		
-		printf("The execution time of testcase C, over 100 executions, in microseconds is: %ld\n", exeTimeC);
+		void* arr[3000];
+		// malloc() 1 byte 3000 times
+		int j = 0;
+		for(j = 0; j < 3000; j++) {
+			arr[j] = (int*) malloc(sizeof(1));
+		}
+		// then free() the 3000 1 byte pointers one by one
+		int k = 0;
+		for(k = 0; k < 3000; k++) {
+			free(arr[k]);
+		}
 	}
-	
-	//Testcase D:
+    gettimeofday (&tvAfter, NULL);
+
+	float executionTimeA = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
+    printf("Total execution time of workload A in microseconds: %f\n", executionTimeA);
+    printf("Average execution time of workload A in microseconds: %f\n", executionTimeA / 100);
+	}
+/////////////////////////////////////////////////
+    // Workload B
 	{
-		//int intialTimeD = 
-		gettimeofday(&timeBefore, NULL);
-		
-		for (int e = 0; e < 100; e++) {
-			//randomly choose between a randomly-sized malloc or free 6000 times
-			
-			//int bytes = rand() % 3000;
-			int cM = 0;
-			int	cF = 0;
-			int* randArr[3000];
-			int r;
-			for(int i = 0; i < 6000; i++) {
-				r = (rand()% 2);
-				if ((r == 0) && cM < 3000 ) {
-					randArr[cM] = (int*) (malloc(sizeof(rand() % 3000)));
-					printf("Malloced");
-					cM++;
-					//valid++;
-				}
-				else {
-					if(cF < cM) {
-						free(randArr[cF]);
-						printf("Free'd");
-						cF++;
-					}	
-				}
-				printf("Part D -- countmalloc = %d : countfree = %d\n", cM, cF);
-			}
-		}
-		//int fianlTimeD = 
-		gettimeofday (&timeAfter, NULL);
-		
-		double exeTimeD = (double) (timeAfter->tv_usec - timeBefore->tv_usec) / 1000000 + (double) (timeAfter->tv_sec - timeBefore->tv_sec);
-		
-		printf("The execution time of testcase D, over 100 executions, in microseconds is: %ld\n", exeTimeD);
+    int *b;
+    gettimeofday(&tvBefore, NULL);
+
+    int i = 0;
+	for (i = 0; i < 100; i++) {
+        //malloc one byte and immediately free it 3000 times in  arow                           
+		int j = 0;
+        for(j = 0; j < 3000; j++) {
+        	b = (int*) malloc(sizeof(1));
+        	free(b);
+        }
+    }
+
+    gettimeofday(&tvAfter, NULL);
+
+	float executionTimeB = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
+    printf("Total execution time of workload B in microseconds: %f\n", executionTimeB);
+    printf("Average execution time of workload B in microseconds: %f\n", executionTimeB / 100);
 	}
+/////////////////////////////////////////////////
+    //Workload C
+	{
+    int intialTimeC = gettimeofday(&tvBefore, NULL);
+
+    // Randomly choose between a 1 byte malloc() or free() 6000 times
+    int i = 0;
+    for (i = 0; i < 100; i++) {
+
+        int numMallocs = 0;
+        int numFrees = 0;
+        int* randomArr[3000];
+        int r;
+        int j = 0;
+        for(j = 0; j < 6000; j++) {
+            r = (rand()% 2);
+            if ((r == 0) && numMallocs < 3000 ) {
+                randomArr[numMallocs] = (int*) (malloc(sizeof(1)));
+                numMallocs++;
+            }
+            else if(numFrees < numMallocs){           	
+                free(randomArr[numFrees]);
+                numFrees++;
+            }
+        }
+    	printf("Part C -- countmalloc = %d : countfree = %d\n", numMallocs, numFrees);
+    }
+    gettimeofday (&tvAfter, NULL);
+
+	float executionTimeC = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
+    printf("Total execution time of workload C in microseconds: %f\n", executionTimeC);
+    printf("Average execution time of workload C in microseconds: %f\n", executionTimeC / 100);
+	}
+/////////////////////////////////////////////////
+    // Workload D
+    {
+    // Randomly choose between a randomly-sized malloc() or free 6000 times
+    gettimeofday(&veBefore, NULL);
+
+    for (int e = 0; e < 100; e++) {
+            //randomly choose between a randomly-sized malloc or free 6000 times
+
+            //int bytes = rand() % 3000;
+            int cM = 0;
+            int     cF = 0;
+            int* randArr[3000];
+            int r;
+            for(int i = 0; i < 6000; i++) {
+                r = (rand()% 2);
+                if ((r == 0) && cM < 3000 ) {
+                    randArr[cM] = (int*) (malloc(sizeof(rand() % 3000)));
+                    printf("Malloced");
+                    cM++;
+                }
+                else if(cF < cM) {
+                    free(randArr[cF]);
+                    printf("Free'd");
+                    cF++;
+                }
+                }
+                printf("Part D -- countmalloc = %d : countfree = %d\n", cM, cF);
+            }
+    }
+    //int fianlTimeD =
+    gettimeofday (&tvAfter, NULL);
 	
-	
-	/*e = (int*) malloc(rand() * sizeof(1));
-	int size = sizeof(e);
-	
-	if(size <= 3000) {
-		for(int r4 = 0; r4 < size; r4++) {
-			free(e);
-		}
-	}*/
-	
+	float executionTimeC = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
+    printf("Total execution time of workload C in microseconds: %f\n", executionTimeC);
+    printf("Average execution time of workload C in microseconds: %f\n", executionTimeC / 100);
 	
 }
