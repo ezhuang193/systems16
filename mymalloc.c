@@ -71,7 +71,7 @@ void* myMalloc(unsigned int memAmount, char* filename, unsigned int linenum) {
 				&& (head->memAmount >= memAmount)) {
 			head->occupied = true;
 			//leave prev and next alone, since new struct aint being created
-		
+				
 			//everytime a memEntry is returned by malloc
 			//we need to append its pointer to our
 			//memEntries array, so when we want to free something, we can check our
@@ -140,7 +140,104 @@ void* myMalloc(unsigned int memAmount, char* filename, unsigned int linenum) {
 
 
 void* myFree(void * ptr, char* filename, unsigned int linenum) {
+	if(ptr == NULL) {
+		fprintf(stderr, "File %s, line %d: unable to free a null pointer.\n", filename, linenum);	
+		return;
+	}
 
+	//The address of our ptr minus the size of our memEntry should give us a pointer
+	//to the memEntry struct from which we can check if valid
+	memEntry* toFree = (memEntry*) ((char *) ptr - sizeof(memEntry));
+
+	//we know that our malloc function has added the pointer of every memEntry
+	//it has ever created in our memEntries array which is global. All we need
+	//to do is ensure that our current toFree pointer has an address that is 
+	//found within this array 
+	int i = 0;
+	for(i = 0; i < maxNumEntries; i++) {
+		if(toFree == memEntries[i]) {
+			//now we need to free this memory block
+			//there are 4 cases: Prev and Next blocks are free,
+			//prev is free, but next isn't, and vice versa OR no neighbors
+			//are free
+			if(toFree->prev != NULL
+					&& toFree->prev->occupied == false) {
+
+				if(toFree->next != NULL
+				 && toFree->next->occupied == false) {
+					//here prev and next memEntry can merge
+					//first remove curr memEntry from glob array
+					//and make unoccupied
+					memEntries[i] = 0;
+					toFree->occupied = false;
+					//get number of bytes to merge from next
+					unsigned int memToMerge = sizeof(memEntry) + (toFree->next->memAmount);
+					//update amount current memEntry memory	
+					toFree->memAmount += memToMerge;
+					//update linked list
+					toFree->next = toFree->next->next;
+
+					//here, next was merged with current memEntry
+					//now need to merge current memEntry with prev
+					//memEntry
+					memToMerge = sizeof(memEntry) + (toFree->memAmount);
+					toFree->prev->memAmount += memToMerge;
+					toFree->prev->next = toFree->next;
+					
+					//done, next was merged with curr and then curr
+					//was merged with prev
+				}
+				//here prev can merge, but not next
+
+				//get size of total memory consumed by current memEntry 
+				unsigned int memToMerge = sizeof(memEntry) + (toFree->memAmount);
+				//need to removed from glob array because free
+				memEntries[i] = 0;
+				toFree->occupied = false; //just for good measure
+
+				//add memToMerge to prev free struct's memAmount
+				toFree->prev->memAmount += memToMerge;	
+				//make prev struct point to curr struct's next
+				toFree->prev->next = toFree->next;
+
+				//done, prev is already unlisted from glob array and
+				//is shown as unoccupied so nothing left to do
+			}
+			else if(toFree->next != NULL
+				&& toFree->next->occupied == false) {
+				//here, prev can't merge, but next can merge
+				
+				//first need to get total memory consumed by next
+				unsigned int memToMerge = sizeof(memEntry) + (toFree->next->memAmount);
+				//now we don't need to remove the ->next struct from the
+				//global array because array contains only structs that 
+				//are currently being occupied (i.e. returned by malloc)
+				
+				//now update the currents struct to add this memory to
+				//its size
+				toFree->memAmount += memToMerge;
+				//and make it's next be whatever it's original ->next's 
+				//next was
+				toFree->next = toFree->next->next;
+
+				//now remove curr memEntry from Arr to indicate that
+				//it was free
+				memEntries[i] = 0;
+				toFree->occupied = false;
+			}
+			else {
+				//the case where we only have one memEntry, or neighbors
+				//are unable to merge
+				//
+				//simplest case: remove this memEntry from array and
+				//change occupied to false, memsize doesnt change
+				memEntries[i] = 0;
+				toFree->occupied = false;
+			}
+			return;
+		}
+	}
+	fprintf(stderr, "File %s, line %d: unable to free pointer.\n", filename, linenum);	
 	return;
 
 }
