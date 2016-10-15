@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-
+//#include "mymalloc.h"
 
 int main(int argc, char** argv) {
 	
@@ -14,11 +14,12 @@ struct timeval tvBefore, tvAfter;
     int i = 0;
 	for (i = 0; i < 100; i++) {
 		
-		void* arr[3000];
+		int* arr[3000];
 		// malloc() 1 byte 3000 times
 		int j = 0;
 		for(j = 0; j < 3000; j++) {
 			arr[j] = (int*) malloc(sizeof(1));
+//			arr[j] =(int*) myMalloc(sizeof(1), __FILE__, __LINE__);
 		}
 		// then free() the 3000 1 byte pointers one by one
 		int k = 0;
@@ -62,7 +63,7 @@ struct timeval tvBefore, tvAfter;
 	{
     // Randomly choose between a 1 byte malloc() or free() 6000 times
 
-    int intialTimeC = gettimeofday(&tvBefore, NULL);
+    gettimeofday(&tvBefore, NULL);
 
     int i = 0;
     for (i = 0; i < 100; i++) {
@@ -131,29 +132,25 @@ struct timeval tvBefore, tvAfter;
 	}
 
 	/* E. */
-	// {
-	// gettimeofday(&tvBefore, NULL);
-	// 	int i, j, k;
-	// 	for (j = 0; j < 100; j++) {
-				
-	// 			int* arr[3000];
-	// 			// allocate i + 1 bytes repeatedly
-	// 			for(i = 0; i < 3000; i++) {
-	// 				arr[i] = (int*) malloc(sizeof(i+1));
-	// 			}
-	// 			// free i + 1 bytes repeatedly
-	// 			for(k = 0; k < 3000; k++) {
-	// 				free(arr[i]);
-	// 			}	
-	// 		}
-		
-	// 	gettimeofday (&tvAfter, NULL);
-		
-	// float executionTimeE = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
- //    printf("Total execution time of workload E in microseconds: %f\n", executionTimeE);
- //    printf("Average execution time of workload E in microseconds: %f\n", executionTimeE / 100);
+	{
 
-	// }
+int * xt;
+	 gettimeofday(&tvBefore, NULL);
+	 	int i, j, k;
+	 	for (j = 0; j < 100; j++) {
+			for(i = 0; i< 1000;i++){
+				xt = (int*) malloc(sizeof(5));
+				free(xt);
+			}	
+		}
+		gettimeofday (&tvAfter, NULL);
+
+		
+	float executionTimeE = (float) (tvAfter.tv_usec - tvBefore.tv_usec) + (float) (tvAfter.tv_sec - tvBefore.tv_sec)/ 1000000L;
+    printf("Total execution time of workload E in microseconds: %f\n", executionTimeE);
+    printf("Average execution time of workload E in microseconds: %f\n", executionTimeE / 100);
+
+	}
 	/* F. */
 	{
 	gettimeofday(&tvBefore, NULL);

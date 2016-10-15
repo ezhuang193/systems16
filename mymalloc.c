@@ -17,7 +17,7 @@ void* myMalloc(unsigned int memAmount, char* filename, unsigned int linenum) {
 	//first ensure at least 1 byte is requested
 	if(memAmount <= 0) {
 		fprintf(stderr, "File %s, line %d: unable to provide 0 or fewer bytes.\n", filename, linenum);
-		return 0;
+		return NULL;
 	}
 
 	//if this is the first time malloc is called, we need to create a 'base' struct
